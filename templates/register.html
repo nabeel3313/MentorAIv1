@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account — MentorAI{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="auth-glass-card fade-in-up">
+
+                    <!-- Logo -->
+                    <a class="auth-logo" href="{{ url_for('index') }}">
+                        <div class="brand-icon">
+                            <i class="fas fa-graduation-cap" style="color:#fff;"></i>
+                        </div>
+                        <span class="brand-text">Mentor<span class="brand-dot">AI</span></span>
+                    </a>
+
+                    <h2>Join MentorAI</h2>
+                    <p class="auth-subtitle">Create your free account and start learning today</p>
+
+                    <form method="POST" action="{{ url_for('register') }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="row g-3 mb-0">
+                            <div class="col-md-6">
+                                <div class="dp-form-group">
+                                    <label class="dp-label" for="first_name">
+                                        <i class="fas fa-user" style="margin-right:6px;opacity:0.6;"></i>First Name
+                                    </label>
+                                    {{ form.first_name(class="form-control", id="first_name", placeholder="John") }}
+                                    {% if form.first_name.errors %}
+                                    {% for error in form.first_name.errors %}
+                                    <small style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{
+                                        error }}</small>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="dp-form-group">
+                                    <label class="dp-label" for="last_name">Last Name</label>
+                                    {{ form.last_name(class="form-control", id="last_name", placeholder="Doe") }}
+                                    {% if form.last_name.errors %}
+                                    {% for error in form.last_name.errors %}
+                                    <small style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{
+                                        error }}</small>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dp-form-group">
+                            <label class="dp-label" for="email">
+                                <i class="fas fa-envelope" style="margin-right:6px;opacity:0.6;"></i>Email Address
+                            </label>
+                            {{ form.email(class="form-control", id="email", placeholder="you@example.com") }}
+                            {% if form.email.errors %}
+                            {% for error in form.email.errors %}
+                            <small style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ error
+                                }}</small>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="dp-form-group">
+                            <label class="dp-label" for="user_type">
+                                <i class="fas fa-user-tag" style="margin-right:6px;opacity:0.6;"></i>I want to join as a
+                            </label>
+                            {{ form.user_type(class="form-select", id="user_type") }}
+                            {% if form.user_type.errors %}
+                            {% for error in form.user_type.errors %}
+                            <small style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ error
+                                }}</small>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="row g-3 mb-0">
+                            <div class="col-md-6">
+                                <div class="dp-form-group">
+                                    <label class="dp-label" for="password">
+                                        <i class="fas fa-lock" style="margin-right:6px;opacity:0.6;"></i>Password
+                                    </label>
+                                    {{ form.password(class="form-control", id="password", placeholder="Create a
+                                    password") }}
+                                    {% if form.password.errors %}
+                                    {% for error in form.password.errors %}
+                                    <small style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{
+                                        error }}</small>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="dp-form-group">
+                                    <label class="dp-label" for="confirm_password">Confirm Password</label>
+                                    {{ form.confirm_password(class="form-control", id="confirm_password",
+                                    placeholder="Repeat password") }}
+                                    {% if form.confirm_password.errors %}
+                                    {% for error in form.confirm_password.errors %}
+                                    <small style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{
+                                        error }}</small>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms hint -->
+                        <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:20px;">
+                            By creating an account you agree to our
+                            <a href="#" style="color:var(--accent-2);text-decoration:none;">Terms of Service</a> &
+                            <a href="#" style="color:var(--accent-2);text-decoration:none;">Privacy Policy</a>.
+                        </p>
+
+                        <div class="d-grid">
+                            {{ form.submit(class="btn-primary-custom w-100 justify-content-center") }}
+                        </div>
+                    </form>
+
+                    <div class="auth-footer-link">
+                        Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

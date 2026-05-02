@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+
+{% block title %}MentorAI — Learn from the Best Professionals{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO SECTION
+═══════════════════════════════════════════════════════════ -->
+<section class="hero-section" id="home">
+    <!-- Background elements -->
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+    <div class="hero-grid"></div>
+
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <!-- Left: Text Content -->
+            <div class="col-lg-6 hero-content">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    Now with AI-powered session analytics
+                </div>
+
+                <h1 class="hero-headline">
+                    Learn from the<br>
+                    <span class="gradient-text">Best Professionals</span><br>
+                    in the World
+                </h1>
+
+                <p class="hero-subheading">
+                    MentorAI connects ambitious learners with verified expert trainers for personalized, live online
+                    sessions. Elevate your skills with one-on-one guidance.
+                </p>
+
+                <div class="hero-cta-group">
+                    {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('register') }}" class="btn-primary-custom">
+                        <span><i class="fas fa-rocket" style="margin-right:6px;"></i>Get Started Free</span>
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn-outline-custom">
+                        Log in <i class="fas fa-arrow-right" style="font-size:0.8rem;"></i>
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('dashboard') }}" class="btn-primary-custom">
+                        <span><i class="fas fa-th-large" style="margin-right:6px;"></i>Go to Dashboard</span>
+                    </a>
+                    <a href="{{ url_for('browse_sessions') }}" class="btn-outline-custom">
+                        Browse Sessions <i class="fas fa-arrow-right" style="font-size:0.8rem;"></i>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Stats -->
+                <div class="hero-stats">
+                    <div>
+                        <div class="hero-stat-num">12K+</div>
+                        <div class="hero-stat-label">Active Learners</div>
+                    </div>
+                    <div>
+                        <div class="hero-stat-num">850+</div>
+                        <div class="hero-stat-label">Expert Trainers</div>
+                    </div>
+                    <div>
+                        <div class="hero-stat-num">98%</div>
+                        <div class="hero-stat-label">Satisfaction Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Visual Card -->
+            <div class="col-lg-6 hero-visual">
+                <div style="position:relative;max-width:480px;margin:0 auto;">
+                    <!-- Floating card top-right -->
+                    <div class="hero-float-card hero-float-card-1">
+                        <div class="hfc-icon">🎯</div>
+                        <div class="hfc-val">+47%</div>
+                        <div class="hfc-lbl">Skill Growth</div>
+                    </div>
+
+                    <!-- Main dashboard card -->
+                    <div class="hero-card-main">
+                        <div class="hero-card-header">
+                            <div class="hc-dot hc-dot-r"></div>
+                            <div class="hc-dot hc-dot-y"></div>
+                            <div class="hc-dot hc-dot-g"></div>
+                            <span class="hero-card-title">Learning Dashboard</span>
+                        </div>
+
+                        <!-- Metrics -->
+                        <div class="hero-metric-row">
+                            <div class="hero-metric">
+                                <div class="hero-metric-val">24</div>
+                                <div class="hero-metric-lbl">Sessions Done</div>
+                            </div>
+                            <div class="hero-metric">
+                                <div class="hero-metric-val">4.9</div>
+                                <div class="hero-metric-lbl">Avg Rating</div>
+                            </div>
+                            <div class="hero-metric">
+                                <div class="hero-metric-val">68h</div>
+                                <div class="hero-metric-lbl">Hours Learned</div>
+                            </div>
+                        </div>
+
+                        <!-- Progress bars -->
+                        <div class="hero-progress-item">
+                            <div class="hero-progress-label">
+                                <span>Python Development</span><span>87%</span>
+                            </div>
+                            <div class="hero-progress-bar">
+                                <div class="hero-progress-fill" style="width:87%;"></div>
+                            </div>
+                        </div>
+                        <div class="hero-progress-item">
+                            <div class="hero-progress-label">
+                                <span>Machine Learning</span><span>64%</span>
+                            </div>
+                            <div class="hero-progress-bar">
+                                <div class="hero-progress-fill" style="width:64%;"></div>
+                            </div>
+                        </div>
+                        <div class="hero-progress-item">
+                            <div class="hero-progress-label">
+                                <span>UI/UX Design</span><span>52%</span>
+                            </div>
+                            <div class="hero-progress-bar">
+                                <div class="hero-progress-fill" style="width:52%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating card bottom-left -->
+                    <div class="hero-float-card hero-float-card-2">
+                        <div class="hfc-icon">⭐</div>
+                        <div class="hfc-val">4.9/5.0</div>
+                        <div class="hfc-lbl">Avg Trainer Rating</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FEATURES SECTION
+═══════════════════════════════════════════════════════════ -->
+<section class="features-section" id="features">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-tag">Why MentorAI</div>
+            <h2 class="section-title fade-in-up">Everything You Need to <span class="gradient-text">Succeed</span></h2>
+            <p class="section-subtitle fade-in-up">A complete platform built for modern learners and world-class
+                trainers.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Feature 1 -->
+            <div class="col-lg-4 col-md-6 fade-in-up">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap fi-purple">
+                        <i class="fas fa-video" style="color:#fff;"></i>
+                    </div>
+                    <h4>Live HD Video Sessions</h4>
+                    <p>Crystal-clear video conferencing with screen sharing, interactive whiteboards, and real-time
+                        collaboration tools built right in.</p>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="col-lg-4 col-md-6 fade-in-up" style="transition-delay:0.1s;">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap fi-blue">
+                        <i class="fas fa-brain" style="color:#fff;"></i>
+                    </div>
+                    <h4>AI Emotion Analytics</h4>
+                    <p>Our AI monitors engagement and stress levels in real-time, giving trainers actionable insights to
+                        adapt their teaching style.</p>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="col-lg-4 col-md-6 fade-in-up" style="transition-delay:0.2s;">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap fi-teal">
+                        <i class="fas fa-shield-alt" style="color:#fff;"></i>
+                    </div>
+                    <h4>End-to-End Security</h4>
+                    <p>Every session is fully encrypted. Your data, payments, and communications are protected by
+                        enterprise-grade security.</p>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="col-lg-4 col-md-6 fade-in-up" style="transition-delay:0.05s;">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap fi-pink">
+                        <i class="fas fa-users" style="color:#fff;"></i>
+                    </div>
+                    <h4>Verified Expert Trainers</h4>
+                    <p>Every trainer is rigorously vetted for expertise, teaching ability, and professionalism before
+                        joining our platform.</p>
+                </div>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="col-lg-4 col-md-6 fade-in-up" style="transition-delay:0.15s;">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap fi-orange">
+                        <i class="fas fa-chart-line" style="color:#fff;"></i>
+                    </div>
+                    <h4>Progress Tracking</h4>
+                    <p>Detailed session reports, skill progress charts, and performance analytics help you stay on track
+                        and measure growth.</p>
+                </div>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="col-lg-4 col-md-6 fade-in-up" style="transition-delay:0.25s;">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap fi-green">
+                        <i class="fas fa-calendar-check" style="color:#fff;"></i>
+                    </div>
+                    <h4>Flexible Scheduling</h4>
+                    <p>Book sessions at your convenience with smart calendar integration, timezone support, and instant
+                        booking confirmations.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     TESTIMONIALS SECTION
+═══════════════════════════════════════════════════════════ -->
+<section class="testimonials-section" id="testimonials">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-tag">Testimonials</div>
+            <h2 class="section-title fade-in-up">Loved by <span class="gradient-text">Thousands</span> of Learners</h2>
+            <p class="section-subtitle fade-in-up">Real stories from real people who transformed their careers with
+                MentorAI.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Testimonial 1 -->
+            <div class="col-lg-4 col-md-6 fade-in-up">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote-icon">"</div>
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">MentorAI completely changed how I learn. My Python trainer was
+                        incredibly patient and knowledgeable. I went from beginner to landing a data science job in just
+                        4 months!</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SR</div>
+                        <div>
+                            <div class="testimonial-name">Sarah Rodriguez</div>
+                            <div class="testimonial-role">Data Scientist at TechCorp</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="col-lg-4 col-md-6 fade-in-up" style="transition-delay:0.1s;">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote-icon">"</div>
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">The AI emotion analytics feature is a game-changer. As a trainer, I can
+                        see exactly when my students are confused or stressed and adjust in real-time. Absolutely
+                        brilliant.</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#3b82f6,#60a5fa);">MK
+                        </div>
+                        <div>
+                            <div class="testimonial-name">Marcus Kim</div>
+                            <div class="testimonial-role">Senior ML Trainer</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="col-lg-4 col-md-6 fade-in-up" style="transition-delay:0.2s;">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote-icon">"</div>
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">I've tried many online learning platforms, but MentorAI is on another
+                        level. The session quality, the trainer expertise, and the progress reports are all exceptional.
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#14b8a6,#2dd4bf);">AP
+                        </div>
+                        <div>
+                            <div class="testimonial-name">Aisha Patel</div>
+                            <div class="testimonial-role">UX Designer at Startup</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONTACT SECTION
+═══════════════════════════════════════════════════════════ -->
+<section class="contact-section" id="contact">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-tag">Contact Us</div>
+            <h2 class="section-title fade-in-up">Get in <span class="gradient-text">Touch</span></h2>
+            <p class="section-subtitle fade-in-up">Have questions? We'd love to hear from you. Send us a message and
+                we'll respond within 24 hours.</p>
+        </div>
+
+        <div class="row g-5 align-items-start justify-content-center">
+            <!-- Contact Info -->
+            <div class="col-lg-4 col-md-5 fade-in-up">
+                <div class="contact-info-item">
+                    <div class="contact-info-icon"><i class="fas fa-envelope"></i></div>
+                    <div>
+                        <div class="contact-info-label">Email Us</div>
+                        <div class="contact-info-value">support@mentorai.com</div>
+                    </div>
+                </div>
+                <div class="contact-info-item">
+                    <div class="contact-info-icon"><i class="fas fa-phone"></i></div>
+                    <div>
+                        <div class="contact-info-label">Call Us</div>
+                        <div class="contact-info-value">+91 62388 76458</div>
+                    </div>
+                </div>
+                <div class="contact-info-item">
+                    <div class="contact-info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div>
+                        <div class="contact-info-label">Office</div>
+                        <div class="contact-info-value">SCMS School of Engineering and Technology, Angamaly, Kerala
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-info-item">
+                    <div class="contact-info-icon"><i class="fas fa-clock"></i></div>
+                    <div>
+                        <div class="contact-info-label">Response Time</div>
+                        <div class="contact-info-value">Within 24 hours</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-6 col-md-7 fade-in-up" style="transition-delay:0.1s;">
+                <div class="contact-card">
+                    <form id="contactForm" onsubmit="handleContactSubmit(event)">
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <div class="dp-form-group">
+                                    <label class="dp-form-label" for="contactName">Full Name</label>
+                                    <input type="text" id="contactName" class="dp-form-control" placeholder="John Doe"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="dp-form-group">
+                                    <label class="dp-form-label" for="contactEmail">Email Address</label>
+                                    <input type="email" id="contactEmail" class="dp-form-control"
+                                        placeholder="john@example.com" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dp-form-group">
+                            <label class="dp-form-label" for="contactSubject">Subject</label>
+                            <input type="text" id="contactSubject" class="dp-form-control"
+                                placeholder="How can we help?">
+                        </div>
+                        <div class="dp-form-group">
+                            <label class="dp-form-label" for="contactMessage">Message</label>
+                            <textarea id="contactMessage" class="dp-form-control"
+                                placeholder="Tell us more about your inquiry..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary-custom" style="width:100%;justify-content:center;">
+                            <span><i class="fas fa-paper-plane" style="margin-right:8px;"></i>Send Message</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function handleContactSubmit(e) {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<span><i class="fas fa-check" style="margin-right:8px;"></i>Message Sent!</span>';
+        btn.style.background = 'linear-gradient(135deg, #22c55e, #4ade80)';
+        btn.disabled = true;
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.style.background = '';
+            btn.disabled = false;
+            e.target.reset();
+        }, 3000);
+    }
+</script>
+{% endblock %}

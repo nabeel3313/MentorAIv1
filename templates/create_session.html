@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Create Session — MentorAI{% endblock %}
+
+{% block content %}
+
+<!-- Page Banner -->
+<div class="page-banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8 page-banner-inner">
+                <div class="page-banner-tag"><i class="fas fa-magic"></i> New Session</div>
+                <h1>Create a <span class="gradient-text">Training Session</span></h1>
+                <p>Set up a new live session and connect with eager learners.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page Content -->
+<div class="page-content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+
+                <div class="glass-panel fade-in-up">
+                    <div class="glass-panel-header">
+                        <h5><i class="fas fa-edit"></i> Session Details</h5>
+                    </div>
+                    <div class="glass-panel-body">
+
+                        <form method="POST" action="{{ url_for('create_session') }}">
+                            {{ form.hidden_tag() }}
+
+                            <!-- Row 1: Title + Category -->
+                            <div class="row g-3 mb-0">
+                                <div class="col-md-8">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="title"><i class="fas fa-heading"
+                                                style="margin-right:6px;opacity:0.6;"></i>Session Title</label>
+                                        {{ form.title(class="form-control", id="title", placeholder="e.g. Python for
+                                        Data Science Beginners") }}
+                                        {% if form.title.errors %}{% for e in form.title.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="category"><i class="fas fa-tag"
+                                                style="margin-right:6px;opacity:0.6;"></i>Category</label>
+                                        {{ form.category(class="form-select", id="category") }}
+                                        {% if form.category.errors %}{% for e in form.category.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="dp-form-group">
+                                <label class="dp-label" for="description"><i class="fas fa-align-left"
+                                        style="margin-right:6px;opacity:0.6;"></i>Description</label>
+                                {{ form.description(class="form-control", id="description", rows="4",
+                                placeholder="Describe what learners will gain from this session...") }}
+                                {% if form.description.errors %}{% for e in form.description.errors %}<small
+                                    style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                    }}</small>{% endfor %}{% endif %}
+                            </div>
+
+                            <!-- Section Divider -->
+                            <div style="height:1px;background:var(--border-glass);margin:12px 0 24px;"></div>
+                            <div
+                                style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-2);margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                                <i class="fas fa-calendar-alt"></i> Schedule & Logistics
+                            </div>
+
+                            <!-- Row 2: Date, Duration, Max Participants -->
+                            <div class="row g-3 mb-0">
+                                <div class="col-md-5">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="scheduled_time"><i class="fas fa-calendar"
+                                                style="margin-right:6px;opacity:0.6;"></i>Date &amp; Time</label>
+                                        {{ form.scheduled_time(class="form-control", id="scheduled_time",
+                                        type="datetime-local") }}
+                                        {% if form.scheduled_time.errors %}{% for e in form.scheduled_time.errors
+                                        %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="duration"><i class="fas fa-clock"
+                                                style="margin-right:6px;opacity:0.6;"></i>Duration (minutes)</label>
+                                        {{ form.duration(class="form-control", id="duration", type="number", min="15",
+                                        max="480", value="60") }}
+                                        {% if form.duration.errors %}{% for e in form.duration.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="max_participants"><i class="fas fa-users"
+                                                style="margin-right:6px;opacity:0.6;"></i>Max Participants</label>
+                                        {{ form.max_participants(class="form-control", id="max_participants",
+                                        type="number", min="1", max="10", value="1") }}
+                                        {% if form.max_participants.errors %}{% for e in form.max_participants.errors
+                                        %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 3: Price + Difficulty -->
+                            <div class="row g-3 mb-0">
+                                <div class="col-md-6">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="price"><i class="fas fa-dollar-sign"
+                                                style="margin-right:6px;opacity:0.6;"></i>Price ($)</label>
+                                        {{ form.price(class="form-control", id="price", type="number", min="0",
+                                        step="0.01", placeholder="0.00") }}
+                                        {% if form.price.errors %}{% for e in form.price.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="difficulty"><i class="fas fa-signal"
+                                                style="margin-right:6px;opacity:0.6;"></i>Difficulty Level</label>
+                                        {{ form.difficulty(class="form-select", id="difficulty") }}
+                                        {% if form.difficulty.errors %}{% for e in form.difficulty.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section Divider -->
+                            <div style="height:1px;background:var(--border-glass);margin:12px 0 24px;"></div>
+                            <div
+                                style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-2);margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                                <i class="fas fa-info-circle"></i> Requirements & Materials
+                            </div>
+
+                            <!-- Prerequisites + Materials -->
+                            <div class="dp-form-group">
+                                <label class="dp-label" for="prerequisites">Prerequisites</label>
+                                {{ form.prerequisites(class="form-control", id="prerequisites", rows="2",
+                                placeholder="Any prerequisites or requirements for this session...") }}
+                                {% if form.prerequisites.errors %}{% for e in form.prerequisites.errors %}<small
+                                    style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                    }}</small>{% endfor %}{% endif %}
+                            </div>
+
+                            <div class="dp-form-group">
+                                <label class="dp-label" for="materials">Required Materials</label>
+                                {{ form.materials(class="form-control", id="materials", rows="2", placeholder="Any
+                                materials or tools learners should have...") }}
+                                {% if form.materials.errors %}{% for e in form.materials.errors %}<small
+                                    style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                    }}</small>{% endfor %}{% endif %}
+                            </div>
+
+                            <!-- Recurring Toggle -->
+                            <div
+                                style="display:flex;align-items:center;gap:12px;padding:16px;background:rgba(124,111,205,0.06);border:1px solid rgba(124,111,205,0.15);border-radius:var(--radius-sm);margin-bottom:20px;">
+                                {{ form.is_recurring(class="", id="is_recurring") }}
+                                <label for="is_recurring"
+                                    style="font-size:0.88rem;color:var(--text-muted);cursor:pointer;margin:0;">
+                                    <i class="fas fa-sync-alt" style="color:var(--accent-2);margin-right:6px;"></i>This
+                                    is a recurring session
+                                </label>
+                            </div>
+
+                            <div id="recurring-options" style="display:none;margin-bottom:20px;">
+                                <div style="height:1px;background:var(--border-glass);margin-bottom:20px;"></div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="dp-form-group">
+                                            <label class="dp-label" for="recurrence_pattern">Recurrence Pattern</label>
+                                            {{ form.recurrence_pattern(class="form-select", id="recurrence_pattern") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="dp-form-group">
+                                            <label class="dp-label" for="recurrence_count">Number of Sessions</label>
+                                            {{ form.recurrence_count(class="form-control", id="recurrence_count",
+                                            type="number", min="2", max="52") }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div style="display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;">
+                                <a href="{{ url_for('trainer_dashboard') }}" class="btn-outline-custom">Cancel</a>
+                                {{ form.submit(class="btn-primary-custom") }}
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('is_recurring').addEventListener('change', function () {
+        document.getElementById('recurring-options').style.display = this.checked ? 'block' : 'none';
+    });
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('scheduled_time').min = now.toISOString().slice(0, 16);
+</script>
+{% endblock %}

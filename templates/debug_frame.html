@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Frame - Session {{ session_id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #frameImage {
+            max-width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: #dc3545;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            color: #155724;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 Debug Frame Viewer - Session {{ session_id }}</h1>
+        
+        <div class="info">
+            <strong>Purpose:</strong> This page shows the last frame captured from the learner's camera to help debug gesture detection.
+        </div>
+        
+        <button class="btn" onclick="loadFrame()">🔄 Refresh Frame</button>
+        
+        <div id="status"></div>
+        
+        <div id="instructions" class="info">
+            <strong>Instructions:</strong>
+            <ol>
+                <li>Make sure you're in the video session as a learner</li>
+                <li>Camera must be active and capturing frames</li>
+                <li>Wait a few seconds for frames to start uploading</li>
+                <li>This page will auto-refresh every 2 seconds</li>
+            </ol>
+        </div>
+        
+        <img id="frameImage" style="display:none; max-width: 100%; border: 2px solid #007bff;" alt="Captured frame">
+        
+        <div id="frameInfo" style="display:none;" class="info">
+            <strong>Last Updated:</strong> <span id="timestamp"></span><br>
+            <strong>Image Size:</strong> <span id="imageSize"></span>
+        </div>
+    </div>
+
+    <script>
+        const sessionId = {{ session_id }};
+        
+        function loadFrame() {
+            document.getElementById('status').innerHTML = '<div class="info">Loading frame...</div>';
+            
+            fetch(`/api/session/${sessionId}/debug-frame`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const img = document.getElementById('frameImage');
+                        img.src = data.frame;
+                        img.style.display = 'block';
+                        
+                        document.getElementById('timestamp').textContent = new Date(data.timestamp).toLocaleString();
+                        document.getElementById('imageSize').textContent = `${Math.round(data.frame.length / 1024)} KB`;
+                        document.getElementById('frameInfo').style.display = 'block';
+                        document.getElementById('instructions').style.display = 'none';
+                        
+                        document.getElementById('status').innerHTML = '<div class="success">✓ Frame loaded successfully - MediaPipe is analyzing this image</div>';
+                    } else {
+                        document.getElementById('status').innerHTML = `<div class="error">❌ ${data.message}<br><br>Make sure you are in the video session and camera is active!</div>`;
+                        document.getElementById('frameImage').style.display = 'none';
+                        document.getElementById('frameInfo').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('status').innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                });
+        }
+        
+        // Auto-refresh every 2 seconds
+        setInterval(loadFrame, 2000);
+        
+        // Load initial frame
+        loadFrame();
+    </script>
+</body>
+</html>

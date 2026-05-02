@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Profile — MentorAI{% endblock %}
+
+{% block content %}
+
+<!-- Page Banner -->
+<div class="page-banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col page-banner-inner">
+                <div class="page-banner-tag"><i class="fas fa-user"></i> My Profile</div>
+                <h1>Account <span class="gradient-text">Settings</span></h1>
+                <p>Manage your profile information, specializations, and security settings.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page Content -->
+<div class="page-content">
+    <div class="container">
+        <div class="row g-4">
+
+            <!-- Left Column: Profile Card + Stats -->
+            <div class="col-md-4 col-lg-3">
+
+                <!-- Profile Card -->
+                <div class="glass-panel mb-4 fade-in-up">
+                    <div class="profile-avatar-wrap">
+                        <div class="profile-avatar-ring">
+                            {{ current_user.first_name[0] }}{{ current_user.last_name[0] }}
+                            <div class="profile-cam-btn"><i class="fas fa-camera"></i></div>
+                        </div>
+                        <div class="profile-name">{{ current_user.first_name }} {{ current_user.last_name }}</div>
+                        <div class="profile-email">{{ current_user.email }}</div>
+                        <span
+                            class="dp-badge {% if current_user.user_type == 'trainer' %}dp-badge-success{% else %}dp-badge-primary{% endif %}">
+                            <i
+                                class="fas fa-{% if current_user.user_type == 'trainer' %}chalkboard-teacher{% else %}graduation-cap{% endif %}"></i>
+                            {{ current_user.user_type|title }}
+                        </span>
+                        {% if current_user.user_type == 'trainer' %}
+                        <div style="margin-top:16px;">
+                            <div style="color:#fbbf24;font-size:0.85rem;margin-bottom:4px;">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                <span style="color:var(--text-muted);margin-left:6px;font-size:0.78rem;">4.5 (28
+                                    reviews)</span>
+                            </div>
+                            <div style="font-size:0.78rem;color:var(--text-muted);">50+ sessions completed</div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="profile-stats-row">
+                        <div class="profile-stat-cell">
+                            <div class="val">24</div>
+                            <div class="lbl">Sessions</div>
+                        </div>
+                        <div class="profile-stat-cell">
+                            <div class="val">18</div>
+                            <div class="lbl">Completed</div>
+                        </div>
+                        <div class="profile-stat-cell">
+                            <div class="val">{{ current_user.created_at.strftime('%b %Y') }}</div>
+                            <div class="lbl">Joined</div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel-body" style="padding:16px;">
+                        <a href="{{ url_for('dashboard') }}" class="quick-action-btn" style="margin-bottom:8px;">
+                            <i class="fas fa-th-large stat-icon-purple"
+                                style="width:32px;height:32px;border-radius:8px;font-size:0.8rem;"></i>
+                            Dashboard
+                        </a>
+                        {% if current_user.user_type == 'trainer' %}
+                        <a href="{{ url_for('create_session') }}" class="quick-action-btn">
+                            <i class="fas fa-plus stat-icon-green"
+                                style="width:32px;height:32px;border-radius:8px;font-size:0.8rem;"></i>
+                            New Session
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Edit Form + Password -->
+            <div class="col-md-8 col-lg-9">
+
+                <!-- Edit Profile -->
+                <div class="glass-panel mb-4 fade-in-up">
+                    <div class="glass-panel-header">
+                        <h5><i class="fas fa-user-edit"></i> Edit Profile</h5>
+                    </div>
+                    <div class="glass-panel-body">
+                        <form method="POST" action="{{ url_for('profile') }}">
+                            {{ form.hidden_tag() }}
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="first_name">First Name</label>
+                                        {{ form.first_name(class="form-control", id="first_name",
+                                        value=current_user.first_name) }}
+                                        {% if form.first_name.errors %}{% for e in form.first_name.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="last_name">Last Name</label>
+                                        {{ form.last_name(class="form-control", id="last_name",
+                                        value=current_user.last_name) }}
+                                        {% if form.last_name.errors %}{% for e in form.last_name.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="email"><i class="fas fa-envelope"
+                                                style="margin-right:6px;opacity:0.6;"></i>Email Address</label>
+                                        {{ form.email(class="form-control", id="email", value=current_user.email) }}
+                                        {% if form.email.errors %}{% for e in form.email.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="phone"><i class="fas fa-phone"
+                                                style="margin-right:6px;opacity:0.6;"></i>Phone Number</label>
+                                        {{ form.phone(class="form-control", id="phone", value=current_user.phone or '')
+                                        }}
+                                        {% if form.phone.errors %}{% for e in form.phone.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="bio">Bio</label>
+                                        {{ form.bio(class="form-control", id="bio", rows="4", placeholder="Tell us about
+                                        yourself...") }}
+                                        {% if current_user.bio %}
+                                        <script>document.getElementById('bio').value = `{{ current_user.bio }}`;</script>
+                                        {% endif %}
+                                        {% if form.bio.errors %}{% for e in form.bio.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+
+                                {% if current_user.user_type == 'trainer' %}
+                                <div class="col-12">
+                                    <div style="height:1px;background:var(--border-glass);margin:8px 0 20px;"></div>
+                                    <div
+                                        style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-2);margin-bottom:16px;">
+                                        Trainer Settings</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="specialization">Specialization</label>
+                                        {{ form.specialization(class="form-control", id="specialization",
+                                        value=current_user.specialization or '') }}
+                                        {% if form.specialization.errors %}{% for e in form.specialization.errors
+                                        %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="hourly_rate">Hourly Rate ($)</label>
+                                        {{ form.hourly_rate(class="form-control", id="hourly_rate",
+                                        value=current_user.hourly_rate or '') }}
+                                        {% if form.hourly_rate.errors %}{% for e in form.hourly_rate.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="experience">Experience (yrs)</label>
+                                        {{ form.experience(class="form-control", id="experience", type="number",
+                                        value=current_user.experience or '') }}
+                                        {% if form.experience.errors %}{% for e in form.experience.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <div class="col-md-6">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="timezone"><i class="fas fa-globe"
+                                                style="margin-right:6px;opacity:0.6;"></i>Timezone</label>
+                                        {{ form.timezone(class="form-select", id="timezone") }}
+                                        {% if form.timezone.errors %}{% for e in form.timezone.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    {{ form.submit(class="btn-primary-custom") }}
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Change Password -->
+                <div class="glass-panel fade-in-up">
+                    <div class="glass-panel-header">
+                        <h5><i class="fas fa-lock"></i> Change Password</h5>
+                    </div>
+                    <div class="glass-panel-body">
+                        <form method="POST" action="{{ url_for('change_password') }}">
+                            {{ password_form.hidden_tag() }}
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="current_password">Current Password</label>
+                                        {{ password_form.current_password(class="form-control", id="current_password")
+                                        }}
+                                        {% if password_form.current_password.errors %}{% for e in
+                                        password_form.current_password.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="new_password">New Password</label>
+                                        {{ password_form.new_password(class="form-control", id="new_password") }}
+                                        {% if password_form.new_password.errors %}{% for e in
+                                        password_form.new_password.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="dp-form-group">
+                                        <label class="dp-label" for="confirm_new_password">Confirm New Password</label>
+                                        {{ password_form.confirm_new_password(class="form-control",
+                                        id="confirm_new_password") }}
+                                        {% if password_form.confirm_new_password.errors %}{% for e in
+                                        password_form.confirm_new_password.errors %}<small
+                                            style="color:#f87171;font-size:0.78rem;display:block;margin-top:4px;">{{ e
+                                            }}</small>{% endfor %}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    {{ password_form.submit(class="btn-outline-custom") }}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

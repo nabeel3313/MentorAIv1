@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Report - {{ session.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+        
+        .report-header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .report-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .timeline {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .timeline-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+        }
+        
+        .timeline-time {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .timeline-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .timeline-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .badge-audio {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .badge-video {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        .emotion-happy { color: #4caf50; }
+        .emotion-sad { color: #f44336; }
+        .emotion-neutral { color: #9e9e9e; }
+        .emotion-fearful { color: #ff9800; }
+        .emotion-angry { color: #d32f2f; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="report-header">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1><i class="fas fa-chart-line"></i> {{ session.title }}</h1>
+                <div>
+                    <a href="{{ url_for('download_session_report', session_id=session.id) }}" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Download PDF
+                    </a>
+                    <a href="{{ url_for('session_reports') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Learner:</strong> {{ learner.get('first_name', 'N/A') if learner else 'N/A' }} {{ learner.get('last_name', '') if learner else '' }}</p>
+                    <p><strong>Date:</strong> 
+                        {% if session.scheduled_time %}
+                            {% if session.scheduled_time.strftime %}
+                                {{ session.scheduled_time.strftime('%B %d, %Y at %I:%M %p') }}
+                            {% else %}
+                                {{ session.scheduled_time }}
+                            {% endif %}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Duration:</strong> {{ session.duration }} minutes</p>
+                    <p><strong>Category:</strong> {{ session.category }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="report-content">
+            <h3>Detection Summary</h3>
+            
+            {% if records %}
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Detections</div>
+                    <div class="stat-value">{{ stats.total }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Audio Detections</div>
+                    <div class="stat-value">{{ stats.audio }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Video Detections</div>
+                    <div class="stat-value">{{ stats.video }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg Stress</div>
+                    <div class="stat-value">
+                        {% if stats.avg_stress is not none %}
+                            {{ stats.avg_stress|round|int }}%
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="mt-5">Detection Timeline</h3>
+            <div class="timeline">
+                {% for record in records %}
+                <div class="timeline-item">
+                    <div class="timeline-time">
+                        <i class="fas fa-clock"></i>
+                        {% if record.get('timestamp') %}
+                            {% if record.get('timestamp').strftime %}
+                                {{ record.get('timestamp').strftime('%I:%M:%S %p') }}
+                            {% else %}
+                                {{ record.get('timestamp') }}
+                            {% endif %}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                        <span class="timeline-badge {{ 'badge-audio' if record.get('detection_type') == 'audio' else 'badge-video' }}">
+                            {{ record.get('detection_type', 'unknown')|upper }}
+                        </span>
+                    </div>
+                    <div class="timeline-content">
+                        {% if record.get('detection_type') == 'audio' %}
+                            <div>
+                                <strong>Emotion:</strong>
+                                <span class="emotion-{{ record.get('audio_emotion', {}).get('primary', 'neutral') }}">
+                                    {{ record.get('audio_emotion', {}).get('primary', 'N/A')|title }}
+                                </span>
+                            </div>
+                            <div>
+                                <strong>Confidence:</strong>
+                                {{ ((record.get('audio_emotion', {}).get('confidence', 0) or 0) * 100)|round|int }}%
+                            </div>
+                            <div>
+                                <strong>Stress:</strong>
+                                {{ ((record.get('voice_stress', {}).get('score', 0) or 0) * 100)|round|int }}%
+                            </div>
+                        {% else %}
+                            <div>
+                                <strong>Face:</strong>
+                                <span class="emotion-{{ record.get('face_emotion', {}).get('emotion', 'neutral') if record.get('face_emotion') else 'neutral' }}">
+                                    {{ record.get('face_emotion', {}).get('emotion', 'N/A')|title if record.get('face_emotion') else 'N/A' }}
+                                </span>
+                            </div>
+                            <div>
+                                <strong>Gestures:</strong>
+                                {{ record.get('gestures', [])|join(', ') if record.get('gestures') else 'None' }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                No detection data recorded for this session.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

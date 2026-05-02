@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Trainer Dashboard — MentorAI{% endblock %}
+
+{% block content %}
+
+<!-- Page Banner -->
+<div class="page-banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8 page-banner-inner">
+                <div class="page-banner-tag"><i class="fas fa-chalkboard-teacher"></i> Trainer Dashboard</div>
+                <h1>Welcome, <span class="gradient-text">{{ current_user.first_name }}</span>! 🎓</h1>
+                <p>Manage your sessions, track earnings, and connect with learners.</p>
+            </div>
+            <div class="col-md-4 text-md-end page-banner-inner">
+                <div class="page-banner-actions justify-content-md-end">
+                    <a href="{{ url_for('create_session') }}" class="btn-primary-custom">
+                        <i class="fas fa-plus"></i><span>New Session</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page Content -->
+<div class="page-content">
+    <div class="container">
+
+        <!-- Stat Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-6 col-md-3 fade-in-up">
+                <div class="stat-card stat-card-purple h-100">
+                    <div class="stat-card-icon stat-icon-purple">
+                        <i class="fas fa-chalkboard" style="color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-card-value">{{ stats.total_sessions }}</div>
+                        <div class="stat-card-label">Total Sessions</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 fade-in-up" style="animation-delay:0.1s;">
+                <div class="stat-card stat-card-green h-100">
+                    <div class="stat-card-icon stat-icon-green">
+                        <i class="fas fa-calendar-check" style="color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-card-value">{{ stats.upcoming_sessions }}</div>
+                        <div class="stat-card-label">Upcoming</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 fade-in-up" style="animation-delay:0.2s;">
+                <div class="stat-card stat-card-blue h-100">
+                    <div class="stat-card-icon stat-icon-blue">
+                        <i class="fas fa-dollar-sign" style="color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-card-value">{{ stats.total_earnings }}</div>
+                        <div class="stat-card-label">Total Earnings</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 fade-in-up" style="animation-delay:0.3s;">
+                <div class="stat-card stat-card-orange h-100">
+                    <div class="stat-card-icon stat-icon-orange">
+                        <i class="fas fa-star" style="color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-card-value">{{ stats.average_rating }}/5</div>
+                        <div class="stat-card-label">Avg Rating</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Main column: Sessions + Requests -->
+            <div class="col-lg-8">
+
+                <!-- Upcoming Sessions -->
+                <div class="glass-panel mb-4 fade-in-up">
+                    <div class="glass-panel-header">
+                        <h5><i class="fas fa-calendar-check"></i> Your Upcoming Sessions</h5>
+                        <a href="{{ url_for('create_session') }}" class="btn-primary-custom"
+                            style="padding:8px 18px;font-size:0.82rem;">
+                            <i class="fas fa-plus"></i><span>New Session</span>
+                        </a>
+                    </div>
+                    <div class="table-responsive">
+                        {% if upcoming_sessions %}
+                        <table class="glass-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Learner</th>
+                                    <th>Date &amp; Time</th>
+                                    <th>Duration</th>
+                                    <th>Price</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for session in upcoming_sessions %}
+                                <tr>
+                                    <td data-label="Title"><span style="font-weight:600;color:var(--white);">{{
+                                            session.title }}</span></td>
+                                    <td data-label="Learner">
+                                        {% if session.learner %}
+                                        <div style="display:flex;align-items:center;gap:8px;">
+                                            <div
+                                                style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:inline-flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:#fff;">
+                                                {{ session.learner.first_name[0] }}{{ session.learner.last_name[0] }}
+                                            </div>
+                                            {{ session.learner.first_name }} {{ session.learner.last_name }}
+                                        </div>
+                                        {% else %}
+                                        <span class="dp-badge dp-badge-secondary"><i class="fas fa-hourglass-half"></i>
+                                            Waiting</span>
+                                        {% endif %}
+                                    </td>
+                                    <td data-label="Date"><i class="fas fa-calendar"
+                                            style="color:var(--accent-2);margin-right:6px;"></i>{{
+                                        session.scheduled_time.strftime('%b %d · %H:%M') }}</td>
+                                    <td data-label="Duration">{{ session.duration }} min</td>
+                                    <td data-label="Price"><span style="color:var(--accent-2);font-weight:700;">${{
+                                            "%.2f"|format(session.price) }}</span></td>
+                                    <td data-label="Action">
+                                        {% if session.learner %}
+                                        <a href="{{ url_for('session_room', session_id=session.id) }}"
+                                            class="btn-primary-custom" style="padding:6px 14px;font-size:0.78rem;">
+                                            <i class="fas fa-video"></i><span>Start</span>
+                                        </a>
+                                        {% else %}
+                                        <span style="font-size:0.78rem;color:var(--text-muted);">No learner yet</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-calendar-plus"></i></div>
+                            <h5>No upcoming sessions</h5>
+                            <p>Create your first session to start teaching!</p>
+                            <a href="{{ url_for('create_session') }}" class="btn-primary-custom">
+                                <i class="fas fa-plus"></i><span>Create Session</span>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Session Requests -->
+                <div class="glass-panel fade-in-up">
+                    <div class="glass-panel-header">
+                        <h5><i class="fas fa-inbox"></i> Session Requests</h5>
+                    </div>
+                    <div class="table-responsive">
+                        {% if session_requests %}
+                        <table class="glass-table">
+                            <thead>
+                                <tr>
+                                    <th>Learner</th>
+                                    <th>Session</th>
+                                    <th>Requested</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in session_requests %}
+                                <tr>
+                                    <td data-label="Learner">{{ request.learner.first_name }} {{
+                                        request.learner.last_name }}</td>
+                                    <td data-label="Session">{{ request.session.title }}</td>
+                                    <td data-label="Date">{{ request.requested_at.strftime('%b %d, %Y') }}</td>
+                                    <td data-label="Actions">
+                                        <div style="display:flex;gap:8px;">
+                                            <button class="btn-primary-custom"
+                                                style="padding:6px 14px;font-size:0.78rem;">
+                                                <i class="fas fa-check"></i><span>Accept</span>
+                                            </button>
+                                            <button class="btn-outline-custom"
+                                                style="padding:6px 14px;font-size:0.78rem;border-color:rgba(248,113,113,0.4);color:#f87171;">
+                                                <span>Decline</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                            <h5>No session requests</h5>
+                            <p>Session requests from learners will appear here.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+
+                <!-- Quick Actions -->
+                <div class="glass-panel mb-4 fade-in-up">
+                    <div class="glass-panel-header">
+                        <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+                    </div>
+                    <div class="glass-panel-body" style="display:flex;flex-direction:column;gap:8px;">
+                        <a href="{{ url_for('create_session') }}" class="quick-action-btn">
+                            <i class="fas fa-plus stat-icon-purple"
+                                style="width:36px;height:36px;border-radius:10px;"></i>
+                            Create New Session
+                        </a>
+                        <a href="{{ url_for('trainer_sessions') }}" class="quick-action-btn">
+                            <i class="fas fa-list stat-icon-blue"
+                                style="width:36px;height:36px;border-radius:10px;"></i>
+                            Manage Sessions
+                        </a>
+                        <a href="{{ url_for('session_reports') }}" class="quick-action-btn">
+                            <i class="fas fa-file-alt stat-icon-green"
+                                style="width:36px;height:36px;border-radius:10px;"></i>
+                            Session Reports
+                        </a>
+                        <a href="{{ url_for('profile') }}" class="quick-action-btn">
+                            <i class="fas fa-user-edit stat-icon-orange"
+                                style="width:36px;height:36px;border-radius:10px;"></i>
+                            Edit Profile
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Reviews -->
+                <div class="glass-panel fade-in-up">
+                    <div class="glass-panel-header">
+                        <h5><i class="fas fa-star"></i> Recent Reviews</h5>
+                    </div>
+                    <div class="glass-panel-body">
+                        {% if recent_reviews %}
+                        {% for review in recent_reviews %}
+                        <div class="review-item">
+                            <div class="review-stars">
+                                {% for i in range(review.rating) %}<i class="fas fa-star"></i>{% endfor %}
+                            </div>
+                            <div class="review-text">"{{ review.comment }}"</div>
+                            <div class="review-author">{{ review.learner.first_name }}</div>
+                            <div class="review-date">{{ review.created_at.strftime('%b %d, %Y') }}</div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="empty-state" style="padding:28px 16px;">
+                            <div class="empty-state-icon" style="width:52px;height:52px;font-size:1.2rem;"><i
+                                    class="fas fa-comments"></i></div>
+                            <h5 style="font-size:0.92rem;">No reviews yet</h5>
+                            <p>Students' reviews will appear here.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

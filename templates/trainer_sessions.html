@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}My Sessions — MentorAI{% endblock %}
+
+{% block content %}
+
+<!-- Page Banner -->
+<div class="page-banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8 page-banner-inner">
+                <div class="page-banner-tag"><i class="fas fa-list"></i> My Sessions</div>
+                <h1>Training <span class="gradient-text">Sessions</span></h1>
+                <p>Manage, track, and launch all the sessions you have created.</p>
+            </div>
+            <div class="col-md-4 text-md-end page-banner-inner">
+                <div class="page-banner-actions justify-content-md-end">
+                    <a href="{{ url_for('create_session') }}" class="btn-primary-custom">
+                        <i class="fas fa-plus"></i><span>New Session</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page Content -->
+<div class="page-content">
+    <div class="container">
+
+        <div class="glass-panel fade-in-up">
+            <div class="glass-panel-header">
+                <h5><i class="fas fa-layer-group"></i> All Sessions</h5>
+            </div>
+            <div class="table-responsive">
+                {% if sessions %}
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Date &amp; Time</th>
+                            <th>Duration</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Learner</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in sessions %}
+                        <tr>
+                            <td data-label="Title"><span style="font-weight:600;color:var(--white);">{{ session.title
+                                    }}</span></td>
+                            <td data-label="Category">
+                                <span class="dp-badge dp-badge-primary">{{ session.category|title }}</span>
+                            </td>
+                            <td data-label="Date"><i class="fas fa-calendar"
+                                    style="color:var(--accent-2);margin-right:6px;"></i>{{
+                                session.scheduled_time.strftime('%b %d · %H:%M') }}</td>
+                            <td data-label="Duration">{{ session.duration }} min</td>
+                            <td data-label="Price"><span style="color:var(--accent-2);font-weight:700;">${{
+                                    "%.2f"|format(session.price) }}</span></td>
+                            <td data-label="Status">
+                                {% if session.status == 'scheduled' %}
+                                <span class="dp-badge dp-badge-success"><i class="fas fa-circle"
+                                        style="font-size:0.5rem;"></i> Scheduled</span>
+                                {% elif session.status == 'completed' %}
+                                <span class="dp-badge dp-badge-primary"><i class="fas fa-check"></i> Completed</span>
+                                {% elif session.status == 'cancelled' %}
+                                <span class="dp-badge dp-badge-danger"><i class="fas fa-times"></i> Cancelled</span>
+                                {% else %}
+                                <span class="dp-badge dp-badge-secondary">{{ session.status|title }}</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Learner">
+                                {% if session.learner %}
+                                {{ session.learner.first_name }} {{ session.learner.last_name }}
+                                {% else %}
+                                <span style="color:var(--text-muted);font-size:0.82rem;">Not booked</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Actions">
+                                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                    <a href="{{ url_for('session_room', session_id=session.id) }}"
+                                        class="btn-outline-custom" style="padding:5px 12px;font-size:0.75rem;">View</a>
+                                    {% if session.status == 'scheduled' %}
+                                    <button class="btn-primary-custom complete-session"
+                                        data-session-id="{{ session.id }}" style="padding:5px 12px;font-size:0.75rem;">
+                                        <span>Done</span>
+                                    </button>
+                                    <button class="btn-outline-custom cancel-session" data-session-id="{{ session.id }}"
+                                        style="padding:5px 12px;font-size:0.75rem;border-color:rgba(248,113,113,0.4);color:#f87171;">
+                                        Cancel
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-calendar-plus"></i></div>
+                    <h5>No sessions created yet</h5>
+                    <p>Create your first session to start teaching!</p>
+                    <a href="{{ url_for('create_session') }}" class="btn-primary-custom">
+                        <i class="fas fa-plus"></i><span>Create Session</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.complete-session').forEach(button => {
+            button.addEventListener('click', function () {
+                const sessionId = this.getAttribute('data-session-id');
+                if (confirm('Mark this session as completed?')) {
+                    fetch(`/api/session/${sessionId}/complete`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }
+                    })
+                        .then(r => r.json())
+                        .then(data => { if (data.success) { alert('Done!'); location.reload(); } else { alert('Error: ' + data.message); } });
+                }
+            });
+        });
+        document.querySelectorAll('.cancel-session').forEach(button => {
+            button.addEventListener('click', function () {
+                const sessionId = this.getAttribute('data-session-id');
+                if (confirm('Cancel this session?')) {
+                    fetch(`/api/session/${sessionId}/cancel`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }
+                    })
+                        .then(r => r.json())
+                        .then(data => { if (data.success) { alert('Session cancelled.'); location.reload(); } else { alert('Error: ' + data.message); } });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

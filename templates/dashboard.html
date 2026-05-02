@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — MentorAI{% endblock %}
+
+{% block content %}
+
+<!-- Page Banner -->
+<div class="page-banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8 page-banner-inner">
+                <div class="page-banner-tag"><i class="fas fa-home"></i> Dashboard</div>
+                <h1>Welcome back, <span class="gradient-text">{{ current_user.first_name }}</span>! 👋</h1>
+                <p>Here's an overview of your learning activity and upcoming sessions.</p>
+            </div>
+            <div class="col-md-4 text-md-end page-banner-inner">
+                <div class="page-banner-actions justify-content-md-end">
+                    <a href="{{ url_for('browse_sessions') }}" class="btn-primary-custom">
+                        <i class="fas fa-search"></i><span>Browse Sessions</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page Content -->
+<div class="page-content">
+    <div class="container">
+
+        <!-- Stat Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-6 col-md-3 fade-in-up">
+                <div class="stat-card stat-card-purple h-100">
+                    <div class="stat-card-icon stat-icon-purple">
+                        <i class="fas fa-calendar-alt" style="color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-card-value">{{ upcoming_sessions|length }}</div>
+                        <div class="stat-card-label">Upcoming Sessions</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 fade-in-up" style="animation-delay:0.1s;">
+                <div class="stat-card stat-card-green h-100">
+                    <div class="stat-card-icon stat-icon-green">
+                        <i class="fas fa-check-circle" style="color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-card-value">{{ completed_sessions|length }}</div>
+                        <div class="stat-card-label">Sessions Completed</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 fade-in-up" style="animation-delay:0.2s;">
+                <div class="stat-card stat-card-blue h-100">
+                    <div class="stat-card-icon stat-icon-blue">
+                        <i class="fas fa-clock" style="color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-card-value">{{ total_hours }}</div>
+                        <div class="stat-card-label">Hours Learned</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 fade-in-up" style="animation-delay:0.3s;">
+                <div class="stat-card stat-card-orange h-100">
+                    <div class="stat-card-icon stat-icon-orange">
+                        <i class="fas fa-chalkboard-teacher" style="color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-card-value">{{ trainers_count }}</div>
+                        <div class="stat-card-label">Expert Trainers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Sessions -->
+        <div class="glass-panel mb-4 fade-in-up">
+            <div class="glass-panel-header">
+                <h5><i class="fas fa-calendar-check"></i> Upcoming Sessions</h5>
+                <a href="{{ url_for('browse_sessions') }}" class="btn-primary-custom"
+                    style="padding:8px 18px;font-size:0.82rem;">
+                    <i class="fas fa-plus"></i><span>Browse More</span>
+                </a>
+            </div>
+            <div class="table-responsive">
+                {% if upcoming_sessions %}
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th>Session Title</th>
+                            <th>Trainer</th>
+                            <th>Date &amp; Time</th>
+                            <th>Duration</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in upcoming_sessions %}
+                        <tr>
+                            <td data-label="Session">
+                                <span style="font-weight:600;color:var(--white);">{{ session.title }}</span>
+                            </td>
+                            <td data-label="Trainer">
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <div
+                                        style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#fff;flex-shrink:0;">
+                                        {{ session.trainer.first_name[0] }}{{ session.trainer.last_name[0] }}
+                                    </div>
+                                    {{ session.trainer.first_name }} {{ session.trainer.last_name }}
+                                </div>
+                            </td>
+                            <td data-label="Date"><i class="fas fa-calendar"
+                                    style="color:var(--accent-2);margin-right:6px;"></i>{{
+                                session.scheduled_time.strftime('%b %d, %Y · %H:%M') }}</td>
+                            <td data-label="Duration"><i class="fas fa-clock"
+                                    style="color:var(--accent-2);margin-right:6px;"></i>{{ session.duration }} min</td>
+                            <td data-label="Action">
+                                <a href="{{ url_for('session_room', session_id=session.id) }}"
+                                    class="btn-primary-custom" style="padding:7px 16px;font-size:0.8rem;">
+                                    <i class="fas fa-video"></i><span>Join</span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-calendar-times"></i></div>
+                    <h5>No upcoming sessions</h5>
+                    <p>Browse sessions and book with your favourite trainer!</p>
+                    <a href="{{ url_for('browse_sessions') }}" class="btn-primary-custom">
+                        <i class="fas fa-search"></i><span>Find Sessions</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Sessions -->
+        <div class="glass-panel fade-in-up">
+            <div class="glass-panel-header">
+                <h5><i class="fas fa-history"></i> Recent Sessions</h5>
+            </div>
+            <div class="table-responsive">
+                {% if completed_sessions %}
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th>Session Title</th>
+                            <th>Trainer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in completed_sessions[:5] %}
+                        <tr>
+                            <td data-label="Session"><span style="font-weight:600;color:var(--white);">{{ session.title
+                                    }}</span></td>
+                            <td data-label="Trainer">{{ session.trainer.first_name }} {{ session.trainer.last_name }}
+                            </td>
+                            <td data-label="Date">{{ session.scheduled_time.strftime('%b %d, %Y') }}</td>
+                            <td data-label="Status"><span class="dp-badge dp-badge-success"><i class="fas fa-check"></i>
+                                    Completed</span></td>
+                            <td data-label="Rating">
+                                {% if session.rating %}
+                                <span style="color:#fbbf24;">
+                                    {% for i in range(session.rating) %}<i class="fas fa-star"
+                                        style="font-size:0.8rem;"></i>{% endfor %}
+                                </span>
+                                {% else %}
+                                <a href="#" class="btn-outline-custom"
+                                    style="padding:5px 12px;font-size:0.75rem;">Rate</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-history"></i></div>
+                    <h5>No session history</h5>
+                    <p>Your completed sessions will appear here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

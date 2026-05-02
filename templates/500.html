@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}500 — Server Error · MentorAI{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div
+                    style="font-size:7rem;font-weight:900;background:linear-gradient(135deg,#f97316,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:16px;">
+                    500</div>
+                <h2 style="font-size:1.6rem;font-weight:800;color:var(--white);margin-bottom:12px;">Server Error</h2>
+                <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:28px;">Something went wrong on our
+                    end. We're working on fixing it — please try again later.</p>
+                <a href="{{ url_for('index') }}" class="btn-primary-custom">
+                    <i class="fas fa-home"></i><span>Back to Home</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

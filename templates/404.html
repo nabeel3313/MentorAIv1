@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}404 — Page Not Found · MentorAI{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div
+                    style="font-size:7rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:16px;">
+                    404</div>
+                <h2 style="font-size:1.6rem;font-weight:800;color:var(--white);margin-bottom:12px;">Page Not Found</h2>
+                <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:28px;">The page you're looking for
+                    doesn't exist or has been moved.</p>
+                <a href="{{ url_for('index') }}" class="btn-primary-custom">
+                    <i class="fas fa-home"></i><span>Back to Home</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
